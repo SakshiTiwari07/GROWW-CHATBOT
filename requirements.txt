@@ -7,7 +7,3 @@ python-dotenv
 sentence-transformers
 chromadb
 groq
-google-genai
-openai
-anthropic
-mistralai

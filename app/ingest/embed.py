@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
@@ -34,6 +35,10 @@ class EmbeddingRecord:
 
 def get_model(model_name: str) -> object:
     """Load one SentenceTransformer per model name and reuse it for questions."""
+    if os.environ.get("VERCEL"):
+        os.environ["HF_HOME"] = "/tmp/huggingface"
+        os.environ["SENTENCE_TRANSFORMERS_HOME"] = "/tmp/sentence-transformers"
+        os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
     if model_name not in _MODELS:
         from sentence_transformers import SentenceTransformer
 

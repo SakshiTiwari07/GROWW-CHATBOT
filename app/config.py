@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import yaml
@@ -134,7 +134,7 @@ def load_settings(config_path: Path | None = None) -> Settings:
     if not isinstance(collection, str) or not collection.strip():
         raise ValueError("chroma.collection must be a non-empty string")
 
-    return Settings(
+    settings = Settings(
         sources=sources,
         citation_catalog=catalog,
         embedding_model=model_name,
@@ -154,6 +154,31 @@ def load_settings(config_path: Path | None = None) -> Settings:
         disclaimer_path=_as_path(ROOT, _require(paths, "disclaimer", "paths"), "paths.disclaimer"),
         llm_provider=provider,
         llm_model=model,
+    )
+    return _runtime_settings(settings)
+
+
+def _runtime_settings(settings: Settings) -> Settings:
+    """On Vercel, copy Chroma to writable /tmp and keep logs there too."""
+    if not os.environ.get("VERCEL"):
+        return settings
+    import shutil
+
+    runtime = Path("/tmp/hdfc-mf")
+    chroma_copy = runtime / "chroma"
+    source = settings.chroma_path
+    if source.is_dir() and not (chroma_copy / "chroma.sqlite3").is_file():
+        if chroma_copy.exists():
+            shutil.rmtree(chroma_copy)
+        shutil.copytree(source, chroma_copy)
+    os.environ["HF_HOME"] = "/tmp/huggingface"
+    os.environ["SENTENCE_TRANSFORMERS_HOME"] = "/tmp/sentence-transformers"
+    os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
+    return replace(
+        settings,
+        chroma_path=chroma_copy if chroma_copy.is_dir() else settings.chroma_path,
+        retrieval_dir=runtime / "retrieval",
+        answers_dir=runtime / "answers",
     )
 
 

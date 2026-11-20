@@ -1,0 +1,7 @@
+[project]
+name = "groww-chatbot"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[tool.vercel]
+entrypoint = "app.api:app"

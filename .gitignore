@@ -6,3 +6,5 @@ __pycache__/
 data/**
 !data/**/
 !data/**/.gitkeep
+!data/chroma/**
+!data/documents/**
