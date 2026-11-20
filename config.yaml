@@ -1,0 +1,104 @@
+# Non-secret settings. The loader fetches sources only.
+# Factsheet and educational rows are citation targets.
+
+sources:
+  - id: hdfc-mutual-funds
+    title: HDFC Mutual Fund
+    url: https://groww.in/mutual-funds/amc/hdfc-mutual-funds
+  - id: hdfc-large-cap-fund-direct-growth
+    title: HDFC Large Cap Fund Direct Growth
+    url: https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth
+  - id: hdfc-equity-fund-direct-growth
+    title: HDFC Flexi Cap Direct Plan Growth
+    url: https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth
+  - id: hdfc-elss-tax-saver-fund-direct-plan-growth
+    title: HDFC ELSS Tax Saver Fund Direct Plan Growth
+    url: https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth
+  - id: hdfc-mid-cap-fund-direct-growth
+    title: HDFC Mid Cap Fund Direct Growth
+    url: https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth
+
+citation_catalog:
+  - title: HDFC Mutual Fund
+    url: https://groww.in/mutual-funds/amc/hdfc-mutual-funds
+    kind: corpus
+  - title: HDFC Large Cap Fund Direct Growth
+    url: https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth
+    kind: corpus
+  - title: HDFC Flexi Cap Direct Plan Growth
+    url: https://groww.in/mutual-funds/hdfc-equity-fund-direct-growth
+    kind: corpus
+  - title: HDFC ELSS Tax Saver Fund Direct Plan Growth
+    url: https://groww.in/mutual-funds/hdfc-elss-tax-saver-fund-direct-plan-growth
+    kind: corpus
+  - title: HDFC Mid Cap Fund Direct Growth
+    url: https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth
+    kind: corpus
+  - title: HDFC Mutual Fund factsheets
+    url: https://www.hdfcfund.com/mutual-funds/factsheets
+    kind: factsheet
+  - title: HDFC Large Cap Fund Direct
+    url: https://www.hdfcfund.com/explore/mutual-funds/hdfc-large-cap-fund/direct
+    kind: factsheet
+  - title: HDFC Flexi Cap Fund Direct
+    url: https://www.hdfcfund.com/explore/mutual-funds/hdfc-flexi-cap-fund/direct
+    kind: factsheet
+  - title: HDFC ELSS Tax Saver Fund Direct
+    url: https://www.hdfcfund.com/explore/mutual-funds/hdfc-elss-tax-saver-fund/direct
+    kind: factsheet
+  - title: HDFC Mid Cap Fund Direct
+    url: https://www.hdfcfund.com/explore/mutual-funds/hdfc-mid-cap-fund/direct
+    kind: factsheet
+  - title: HDFC Mutual Fund at a glance
+    url: https://www.hdfcfund.com/about-us/hdfc-mf-at-a-glance
+    kind: educational
+  - title: SEBI — Understanding mutual funds
+    url: https://investor.sebi.gov.in/understanding_mf.html
+    kind: educational
+  - title: SEBI — Investor education material
+    url: https://investor.sebi.gov.in/iematerial.html
+    kind: educational
+  - title: AMFI — Investor corner
+    url: https://www.amfiindia.com/investor
+    kind: educational
+  - title: AMFI — Types of mutual fund schemes
+    url: https://www.amfiindia.com/investor/knowledge-center-info?zoneName=TypesOfMutualFundSchemes
+    kind: educational
+  - title: AMFI — Categorization of mutual fund schemes
+    url: https://www.amfiindia.com/investor/knowledge-center-info?zoneName=CategorizationOfMutualFundSchemes
+    kind: educational
+  - title: AMFI — Risks in mutual funds
+    url: https://www.amfiindia.com/investor/knowledge-center-info?zoneName=riskInMutualFunds
+    kind: educational
+  - title: AMFI — Expense ratio
+    url: https://www.amfiindia.com/investor/knowledge-center-info?zoneName=expenseRatio
+    kind: educational
+  - title: AMFI — Direct plan
+    url: https://www.amfiindia.com/investor/knowledge-center-info?zoneName=DirectPlan
+    kind: educational
+  - title: AMFI — Myths and facts about mutual funds
+    url: https://www.amfiindia.com/investor/knowledge-center-info?zoneName=MythsAndFactsAboutMutualFunds
+    kind: educational
+
+embedding:
+  model: sentence-transformers/all-MiniLM-L6-v2
+
+chroma:
+  path: data/chroma
+  collection: hdfc_mf_facts
+
+chunk:
+  max_chars: 800
+
+retrieval:
+  top_k: 4
+
+paths:
+  html: data/html
+  documents: data/documents
+  chunks: data/chunks/chunks.jsonl
+  embeddings: data/embeddings/embeddings.jsonl
+  retrieval: data/retrieval
+  answers: data/answers
+  ingest_report: data/ingest_report.json
+  disclaimer: app/disclaimer.txt

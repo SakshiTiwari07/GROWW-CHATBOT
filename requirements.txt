@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+httpx
+beautifulsoup4
+pyyaml
+python-dotenv
+sentence-transformers
+chromadb
+groq
+google-genai
+openai
+anthropic
+mistralai

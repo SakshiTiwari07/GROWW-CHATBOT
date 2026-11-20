@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HDFC Mutual Fund Facts</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="mast">
+        <h1>HDFC Mutual Fund Facts</h1>
+        <p class="scope">AMC overview plus Large Cap, Flexi Cap, ELSS, and Mid Cap.</p>
+        <p class="disclaimer">Facts-only. No investment advice.</p>
+      </header>
+
+      <section class="examples" aria-label="Example questions">
+        <button type="button" data-question="What is the expense ratio of HDFC Large Cap Fund Direct Growth?">
+          What is the expense ratio of HDFC Large Cap Fund Direct Growth?
+        </button>
+        <button type="button" data-question="What is the ELSS lock-in?">
+          What is the ELSS lock-in?
+        </button>
+        <button type="button" data-question="What is the minimum SIP for HDFC Flexi Cap Direct Plan Growth?">
+          What is the minimum SIP for HDFC Flexi Cap Direct Plan Growth?
+        </button>
+      </section>
+
+      <section class="transcript" id="transcript" aria-live="polite">
+        <p class="empty">Answers appear here with one source link.</p>
+      </section>
+
+      <form id="ask-form" class="ask">
+        <label for="question">Question</label>
+        <div class="ask-row">
+          <input id="question" name="question" type="text" autocomplete="off" placeholder="Ask a fact about these HDFC schemes" />
+          <button id="send" type="submit">Send</button>
+        </div>
+      </form>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
