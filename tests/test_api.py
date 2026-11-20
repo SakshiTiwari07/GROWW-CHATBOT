@@ -36,7 +36,7 @@ class AskApiTests(unittest.TestCase):
             last_updated="2026-11-20",
             refused=False,
         )
-        with patch("app.api.ask", return_value=canned) as ask_mock:
+        with patch("app.ask.service.ask", return_value=canned) as ask_mock:
             response = TestClient(app).post(
                 "/ask",
                 json={"question": " What is the expense ratio of HDFC Large Cap Fund Direct Growth? "},

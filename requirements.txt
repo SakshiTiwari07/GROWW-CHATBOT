@@ -4,6 +4,7 @@ httpx
 beautifulsoup4
 pyyaml
 python-dotenv
-sentence-transformers
 chromadb
 groq
+--extra-index-url https://download.pytorch.org/whl/cpu
+sentence-transformers

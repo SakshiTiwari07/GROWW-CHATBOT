@@ -9,9 +9,6 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from app.ask.service import ask
-from app.config import load_settings
-
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 app = FastAPI(title="HDFC Mutual Fund Facts")
@@ -30,11 +27,17 @@ class AskBody(BaseModel):
 
 @app.get("/")
 def home() -> FileResponse:
-    return FileResponse(STATIC_DIR / "index.html")
+    page = STATIC_DIR / "index.html"
+    if not page.is_file():
+        raise HTTPException(status_code=500, detail="The page file is missing from this deployment.")
+    return FileResponse(page)
 
 
 @app.post("/ask", response_model=AskBody)
 def ask_route(body: AskRequest) -> AskBody:
+    from app.ask.service import ask
+    from app.config import load_settings
+
     question = body.question.strip()
     if not question:
         raise HTTPException(status_code=400, detail="Question is empty.")
@@ -47,4 +50,4 @@ def ask_route(body: AskRequest) -> AskBody:
     )
 
 
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static") if STATIC_DIR.is_dir() else None

@@ -3,6 +3,7 @@
   "functions": {
     "index.py": {
       "maxDuration": 120,
+      "includeFiles": "{app/static/**,app/disclaimer.txt,config.yaml,data/chroma/**,data/documents/**}",
       "excludeFiles": "{tests/**,.venv/**,data/html/**,data/embeddings/**,data/chunks/**,data/retrieval/**,data/answers/**}"
     }
   }
