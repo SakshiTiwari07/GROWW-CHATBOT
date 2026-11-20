@@ -31,7 +31,7 @@ async function ask(question) {
     });
     const payload = await response.json();
     if (!response.ok) {
-      showError(exchange, payload.detail || "The question could not be answered.");
+      showError(exchange, failureMessage(payload));
       return;
     }
     showAnswer(exchange, payload);
@@ -74,6 +74,19 @@ function showAnswer(exchange, payload) {
   updated.className = "updated";
   updated.textContent = `Last updated from sources: ${payload.last_updated}`;
   exchange.append(link, updated);
+}
+
+function failureMessage(payload) {
+  if (payload && payload.error && String(payload.error.code) === "401") {
+    return "This link is private. In the Vercel project, turn off Deployment Protection, then open the site again.";
+  }
+  if (payload && typeof payload.detail === "string" && payload.detail) {
+    return payload.detail;
+  }
+  if (payload && payload.error && payload.error.message) {
+    return payload.error.message;
+  }
+  return "The question could not be answered.";
 }
 
 function showError(exchange, message) {

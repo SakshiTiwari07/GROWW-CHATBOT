@@ -22,6 +22,11 @@ class AskApiTests(unittest.TestCase):
         self.assertIn("What is the expense ratio of HDFC Large Cap Fund Direct Growth?", page)
         self.assertIn("What is the ELSS lock-in?", page)
         self.assertIn("What is the minimum SIP for HDFC Flexi Cap Direct Plan Growth?", page)
+        self.assertIn("What is the exit load of HDFC Large Cap Fund Direct Growth?", page)
+        self.assertIn("What is the fund size of HDFC Large Cap Fund Direct Growth?", page)
+        self.assertIn("What is the benchmark of HDFC Mid Cap Fund Direct Growth?", page)
+        self.assertIn("What is the expense ratio of HDFC ELSS Tax Saver Fund?", page)
+        self.assertIn("What is the minimum SIP for HDFC ELSS Tax Saver Fund?", page)
         self.assertNotIn("password", page.lower())
         self.assertNotIn("type=\"email\"", page)
 
