@@ -106,20 +106,23 @@ def _corpus_date(settings: Settings) -> str:
 
 
 def _save(settings: Settings, question: str, intent: str, response: AskResponse) -> AskResponse:
-    settings.answers_dir.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
-    payload = {
-        "question": question,
-        "intent": intent,
-        "answer": response.answer,
-        "citation_url": response.citation_url,
-        "last_updated": response.last_updated,
-        "refused": response.refused,
-        "llm": "groq",
-        "embedding_model": settings.embedding_model,
-    }
-    (settings.answers_dir / f"{stamp}.json").write_text(
-        json.dumps(payload, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    try:
+        settings.answers_dir.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        payload = {
+            "question": question,
+            "intent": intent,
+            "answer": response.answer,
+            "citation_url": response.citation_url,
+            "last_updated": response.last_updated,
+            "refused": response.refused,
+            "llm": "groq",
+            "embedding_model": settings.embedding_model,
+        }
+        (settings.answers_dir / f"{stamp}.json").write_text(
+            json.dumps(payload, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    except OSError:
+        return response
     return response

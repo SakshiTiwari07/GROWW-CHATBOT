@@ -41,7 +41,10 @@ def ask_route(body: AskRequest) -> AskBody:
     question = body.question.strip()
     if not question:
         raise HTTPException(status_code=400, detail="Question is empty.")
-    response = ask(question, load_settings())
+    try:
+        response = ask(question, load_settings())
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="The question could not be answered.") from exc
     return AskBody(
         answer=response.answer,
         citation_url=response.citation_url,

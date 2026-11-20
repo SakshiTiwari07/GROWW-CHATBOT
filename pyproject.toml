@@ -8,9 +8,7 @@ dependencies = [
   "httpx",
   "pyyaml",
   "python-dotenv",
-  "chromadb",
   "groq",
-  "fastembed",
 ]
 
 [tool.vercel]

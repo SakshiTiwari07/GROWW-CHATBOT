@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -138,6 +140,44 @@ class AskTests(unittest.TestCase):
         self.assertIn("0.99%", response.answer)
         self.assertEqual(seen["model"], DEFAULT_MODEL)
         self.assertIn("supplied excerpts", seen["system"])
+
+
+class DocumentRetrievalTests(unittest.TestCase):
+    def test_vercel_reads_the_saved_page_without_chroma(self) -> None:
+        from app.ask.retrieve import retrieve
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = settings(root)
+            config.documents_dir.mkdir()
+            page = {
+                "doc_id": "hdfc-large-cap-fund-direct-growth",
+                "url": PAGE,
+                "title": "HDFC Large Cap Fund Direct Growth",
+                "text": "Expense ratio\n0.99%\nExit load\n1% if redeemed within 1 year",
+                "fetched_at": "2026-11-20",
+            }
+            (config.documents_dir / "hdfc-large-cap-fund-direct-growth.json").write_text(
+                json.dumps(page),
+                encoding="utf-8",
+            )
+            previous = os.environ.get("VERCEL")
+            os.environ["VERCEL"] = "1"
+            try:
+                found = retrieve(
+                    "What is the expense ratio of HDFC Large Cap Fund Direct Growth?",
+                    config,
+                )
+            finally:
+                if previous is None:
+                    os.environ.pop("VERCEL", None)
+                else:
+                    os.environ["VERCEL"] = previous
+
+        self.assertFalse(found.corpus_empty)
+        self.assertIn("0.99%", found.hits[0].text)
+        self.assertEqual(found.hits[0].section, "Expense ratio")
+        self.assertFalse((root / "chroma").exists())
 
 
 if __name__ == "__main__":

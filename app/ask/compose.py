@@ -83,7 +83,7 @@ def _prompt(
 
 def _template(intent: str, hits: tuple[Hit, ...], settings: Settings, citation: str) -> tuple[str, str]:
     if intent == "factual" and hits:
-        return f"The loaded page covers this topic. Source: {hits[0].url}", hits[0].url
+        return f"{_fact_line(hits[0])} Source: {hits[0].url}", hits[0].url
     if intent == "factual":
         url = settings.sources[0].url
         return f"Sources are not loaded yet. Source: {url}", url
@@ -101,6 +101,19 @@ def _template(intent: str, hits: tuple[Hit, ...], settings: Settings, citation: 
         "This assistant covers HDFC Mutual Fund and four HDFC schemes only. "
         f"Source: {citation}"
     ), citation
+
+
+def _fact_line(hit: Hit) -> str:
+    lines = [line.strip() for line in hit.text.splitlines() if line.strip()]
+    value = next(
+        (line for line in reversed(lines) if any(mark in line for mark in "₹%") or line.lower() == "nil"),
+        "",
+    )
+    if hit.section and value and value.lower() != hit.section.lower():
+        return f"{hit.section}: {value}."
+    if lines:
+        return f"{lines[-1]}."
+    return "The loaded page covers this topic."
 
 
 def _catalog_url(settings: Settings, intent: str, hits: tuple[Hit, ...]) -> str:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -61,6 +62,8 @@ class Retrieval:
 
 def retrieve(question: str, settings: Settings, embed: Embed | None = None) -> Retrieval:
     """Search stored chunks. The embedding model is the Hugging Face model from config."""
+    if os.environ.get("VERCEL"):
+        return _retrieve_documents(question, settings)
     from app.ingest.store import open_collection
 
     collection = open_collection(settings)
@@ -76,6 +79,53 @@ def retrieve(question: str, settings: Settings, embed: Embed | None = None) -> R
     retrieval = Retrieval(question=question, hits=ranked, corpus_empty=False)
     _write_retrieval(settings, retrieval)
     return retrieval
+
+
+def _retrieve_documents(question: str, settings: Settings) -> Retrieval:
+    """Answer from the saved pages. Vercel cannot load the embedding model in the function."""
+    from app.ingest.chunk import _read_documents, chunk_documents
+
+    chunks = chunk_documents(_read_documents(settings), settings.chunk_max_chars)
+    if not chunks:
+        return Retrieval(question=question, hits=(), corpus_empty=True)
+    doc_id, section = question_focus(question)
+    chosen = _matching_chunks(chunks, doc_id, section, question)
+    hits = [
+        Hit(
+            chunk_id=chunk.chunk_id,
+            text=chunk.text,
+            url=chunk.url,
+            title=chunk.title,
+            section=chunk.section,
+            fetched_at=chunk.fetched_at,
+            distance=0.0 if section and chunk.section == section else 0.5,
+        )
+        for chunk in chosen
+    ]
+    matched = section if any(hit.section == section for hit in hits) else None
+    ranked = rank_hits(hits, matched)[: settings.retrieval_top_k]
+    retrieval = Retrieval(question=question, hits=ranked, corpus_empty=False)
+    try:
+        _write_retrieval(settings, retrieval)
+    except OSError:
+        pass
+    return retrieval
+
+
+def _matching_chunks(chunks, doc_id: str | None, section: str | None, question: str):
+    pool = [chunk for chunk in chunks if chunk.doc_id == doc_id] if doc_id else list(chunks)
+    if doc_id and section:
+        matched = [chunk for chunk in pool if chunk.section == section]
+        if matched:
+            return matched
+    needle = _document_needle(question)
+    if doc_id and needle:
+        matched = [chunk for chunk in pool if needle.lower() in chunk.text.lower()]
+        if matched:
+            return matched
+    if pool:
+        return pool
+    return list(chunks)
 
 
 def question_focus(question: str) -> tuple[str | None, str | None]:
