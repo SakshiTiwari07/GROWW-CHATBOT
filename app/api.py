@@ -50,4 +50,4 @@ def ask_route(body: AskRequest) -> AskBody:
     )
 
 
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static") if STATIC_DIR.is_dir() else None
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")

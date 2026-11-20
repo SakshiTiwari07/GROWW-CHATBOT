@@ -33,16 +33,38 @@ class EmbeddingRecord:
         }
 
 
+class _OnnxEncoder:
+    """Same MiniLM model, without the PyTorch wheel Vercel cannot fit."""
+
+    def __init__(self, model_name: str) -> None:
+        from fastembed import TextEmbedding
+
+        self._model = TextEmbedding(model_name=model_name)
+
+    def encode(self, texts, normalize_embeddings=True, convert_to_numpy=True, show_progress_bar=False):
+        import numpy as np
+
+        rows = [np.asarray(vector, dtype=np.float64) for vector in self._model.embed(list(texts))]
+        array = np.vstack(rows) if rows else np.zeros((0, 0))
+        if normalize_embeddings and len(array):
+            norms = np.linalg.norm(array, axis=1, keepdims=True)
+            array = array / np.maximum(norms, 1e-12)
+        return array
+
+
 def get_model(model_name: str) -> object:
-    """Load one SentenceTransformer per model name and reuse it for questions."""
+    """Load one embedding model and reuse it for questions."""
     if os.environ.get("VERCEL"):
         os.environ["HF_HOME"] = "/tmp/huggingface"
-        os.environ["SENTENCE_TRANSFORMERS_HOME"] = "/tmp/sentence-transformers"
+        os.environ["FASTEMBED_CACHE_PATH"] = "/tmp/fastembed"
         os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
     if model_name not in _MODELS:
-        from sentence_transformers import SentenceTransformer
+        if os.environ.get("VERCEL"):
+            _MODELS[model_name] = _OnnxEncoder(model_name)
+        else:
+            from sentence_transformers import SentenceTransformer
 
-        _MODELS[model_name] = SentenceTransformer(model_name)
+            _MODELS[model_name] = SentenceTransformer(model_name)
     return _MODELS[model_name]
 
 

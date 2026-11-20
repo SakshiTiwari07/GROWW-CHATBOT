@@ -172,7 +172,7 @@ def _runtime_settings(settings: Settings) -> Settings:
             shutil.rmtree(chroma_copy)
         shutil.copytree(source, chroma_copy)
     os.environ["HF_HOME"] = "/tmp/huggingface"
-    os.environ["SENTENCE_TRANSFORMERS_HOME"] = "/tmp/sentence-transformers"
+    os.environ["FASTEMBED_CACHE_PATH"] = "/tmp/fastembed"
     os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
     return replace(
         settings,

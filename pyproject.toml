@@ -2,6 +2,16 @@
 name = "groww-chatbot"
 version = "0.1.0"
 requires-python = ">=3.10"
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "httpx",
+  "pyyaml",
+  "python-dotenv",
+  "chromadb",
+  "groq",
+  "fastembed",
+]
 
 [tool.vercel]
 entrypoint = "index:app"
